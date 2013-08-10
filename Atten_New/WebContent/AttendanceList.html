@@ -1,0 +1,92 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+  <meta name=viewport content="user-scalable=no,width=device-width" />
+<!-- CSS
+  ================================================== -->
+<link rel="stylesheet" href="stylesheets/base.css">
+<link rel="stylesheet" href="stylesheets/skeleton.css">
+<link rel="stylesheet" href="stylesheets/layout.css">
+<link rel="stylesheet" href="stylesheets/jquery.mobile-1.3.1.css">
+
+<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<!-- JS
+	================================================== -->
+<script src="javascripts/json2.js"></script>
+<script src="javascripts/jquery-1.7.1.min.js"></script>
+<script src="javascripts/jquery.tmpl.js"></script>
+<script src="javascripts/jquery.mobile-1.2.0.js"></script>
+<script src="javascripts/underscore.js"></script>
+<script src="javascripts/backbone.js"></script>
+<script src="javascripts/backbone.localStorage.js"></script>
+<script src="javascripts/tabs.js"></script>
+<script src="javascripts/appmodelcollection.js"></script>
+<script src="javascripts/class-app.js"></script>
+<script type="text/javascript">
+	$(
+		function(){
+			staffInput=localStorage.getItem('_attendancestaff');
+			console.log('staffInput : ',staffInput);			
+			staffInput=JSON.parse(staffInput);
+			staffInput=JSON.parse(staffInput);
+			console.log('staffInput : ',staffInput);
+			
+			Students.fetch();
+			
+			studentSelect=Students.models.filter(function(student,key,list){
+				var stud=list[key].toJSON();
+				console.log('stu.staffName',stud.studentName);
+				console.log('stu.departName',stud.departName);
+				console.log('stu.semesterName',stud.semesterName);
+				console.log('staffInput.departName',staffInput.departName);
+				console.log('staffInput.semesterName',staffInput.semesterName);
+				return stud.departName==staffInput.departName && stud.semesterName==staffInput.semesterName;
+				
+			});
+			
+			console.log('Student Select ',studentSelect);
+			var studentListHtml='';		
+			var i;
+			var semName=[];
+			for(i in studentSelect){	
+				studentListHtml+='<div class="ui-block-a ui-bar-a">'+studentSelect[i].attributes['studentId']+'</div><div class="ui-block-b ui-bar-a">'+studentSelect[i].attributes['studentName']+'</div> <div class="ui-block-c ui-bar-a"> ';
+				studentListHtml+='<div data-role="fieldcontain">';
+				studentListHtml+='<select name="slider" id="flip-b" data-role="slider">';
+				studentListHtml+='<option value="Absent">Absent</option>';
+				studentListHtml+='<option value="Present">Present</option>';
+				studentListHtml+='</select>'; 
+				studentListHtml+='</div>';
+				studentListHtml+='</div>';
+				console.log('studentListHtml',studentListHtml);
+			}			
+			$('#studentList').html(studentListHtml);
+			 			
+		}
+	);
+</script>
+<script>
+  //reset type=date inputs to text
+  $( document ).bind( "mobileinit", function(){
+    $.mobile.page.prototype.options.degradeInputs.date = true;
+  });	
+</script>
+</head> 
+
+<body> 
+
+<div data-role=page id=home>
+  <div data-role=header>
+    <h1>Attend List</h1>
+  </div>
+
+  <div data-role=content>
+    <h3> Student List </h3>
+    <div class=ui-grid-b id="studentList">
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

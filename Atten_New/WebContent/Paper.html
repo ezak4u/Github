@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+	<title>Your Page Title Here :)</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="./stylesheets/base.css">
+	<link rel="stylesheet" href="./stylesheets/skeleton.css">
+	<link rel="stylesheet" href="./stylesheets/layout.css">
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="./images/favicon.ico">
+	<link rel="apple-touch-icon" href="./images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="./images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="./images/apple-touch-icon-114x114.png">
+	
+	<!-- JS
+	================================================== -->
+	<script src="./javascripts/json2.js"></script>	
+	<script src="./javascripts/jquery-1.7.1.min.js"></script>
+	<script src="./javascripts/jquery.tmpl.js"></script>	
+	<script src="./javascripts/underscore.js"></script>		
+	<script src="./javascripts/backbone.js"></script>
+	<script src="./javascripts/backbone.localStorage.js"></script>	
+	<script src="./javascripts/tabs.js"></script>
+	<script src="javascripts/appmodelcollection.js"></script>
+	<script src="./javascripts/paper-app.js"></script>	
+
+</head>
+<body>
+
+
+
+	<!-- Primary Page Layout
+	================================================== -->
+
+	<div class="container">
+
+	    <div id="app">
+	      	<header><h1>Paper Detail</h1></header>
+	
+			  <ul class="tabs">
+			    <li><a id="create-tab" class="active" href="javascript:void(0);">Create</a></li>
+			    <li><a id="manage-tab" href="javascript:void(0);">Manage</a></li>
+			  </ul>
+
+	      <div id="create" class="content">
+		 			<form id="paper-form">
+		 			<input type="text" name="paperId"   id="paperId-field" value=""   placeholder="Enter Subject Code..."/>				 			
+				    <input type="text" name="paperName" id="paperName-field" value="" placeholder="Enter Subject Name..."/>				    			
+			    </form>
+					<div class="buttons">
+			      <button id="add-paper">Add Paper</button>
+			    </div>
+	      </div>
+	
+				<div id="manage" class="content" data-sort="paperName">
+					<table>
+						<thead>
+							<tr>
+							  <th><input id="selectall" type="checkbox" name="selectall"/></th>
+							  <th><a data-sort="paperId" class="sort" href="javascript:void(0);">Paper ID</a></th>
+							  <th><a data-sort="paperName" class="sort" href="javascript:void(0);">Paper Name</a></th>
+							  <th></th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>	
+				</div>
+				
+				<div id="manage-edit" class="content">
+		 			<form id="paper-edit-form">
+		 			<input type="text" name="paperId"   id="paperId-field" value=""   placeholder="Enter Subject Code..."/>
+				    <input type="text" name="paperName" id="paperName-field" value="" placeholder="Enter Subject Name..."/>				
+			    </form>
+					<div class="buttons">
+			      <button id="update-paper">update paper</button>
+			    </div>
+	      </div>
+					
+	    </div>
+
+	   <footer>
+			MSC-IT <a href='http://annauniv.edu' target="_blank">Anna University</a> 
+		</footer>
+		
+	</div><!-- container -->
+
+	<!-- Templates -->
+    <script id="paper-list" type="text/template">
+		  <td><input class="select" type="checkbox" name="select" data-id="${id}" /></td>
+		  <td>${paperId}</td>	
+		  <td>${paperName}</td>
+		  <td>
+		    <a class="edit-paper" href="javascript:void(0);" data-id="${id}">edit</a>
+		    <a class="delete-paper" href="javascript:void(0);" data-id="${id}">delete</a>  
+		  </td>									
+    </script>
+
+
+<!-- End Document
+================================================== -->
+</body>
+</html>

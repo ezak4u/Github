@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>HomePage</title>
+
+		<script src="javascripts/json2.js"></script>
+		<script src="javascripts/jquery-1.7.1.min.js"></script>
+		<script src="javascripts/jquery.tmpl.js"></script>
+		<script src="javascripts/underscore.js"></script>
+		<script src="javascripts/backbone.js"></script>
+		<script src="javascripts/backbone.localStorage.js"></script>
+		<script src="javascripts/tabs.js"></script>
+		<script src="javascripts/appmodelcollection.js"></script>
+
+<script type="text/javascript">
+	$(function(){
+	Students.fetch();	
+	attenStaff=JSON.parse(localStorage.getItem('_attendancestaff'));
+	data={};
+	data=JSON.parse(attenStaff);	
+	studentSelect=Students.models.filter(function(student,key,list){
+		var stud=list[key].toJSON();
+		console.log('stu.departName',stud.departName);
+		console.log('staffInput.departName',data.departName);
+		console.log('stu.semesterName',stud.semesterName);
+		console.log('staffInput.semesterName',data.semesterName);
+		return stud.departName==data.departName && stud.semesterName==data.semesterName;
+		
+	});
+	
+	console.log('studentSelect',studentSelect);
+		
+	StudentDefCollection = new refactorStudentCollection();
+
+	studentSelect.forEach(function(key) {
+		sMod = new refactorStudent();
+		sMod.set({
+			'id' : key.attributes.studentId,
+			'Name' : key.attributes.studentName,
+			'Status' : 'absent'
+		});
+		StudentDefCollection.add(sMod);
+	});
+		
+	givenDateRecord=data.InputData;
+	currentModels='';
+	sDateColl.fetch();
+	console.log('sDateColl ',sDateColl);	
+	if(sDateColl!=null){
+	sDateColl.forEach(function(key,index,list) {
+		console.log('list',list,'index',index,'key',key);
+		console.log('list',list[index].id,'givenDateRecord',givenDateRecord);	
+		if(list[index].id==givenDateRecord){
+			var   stuList =	list[index].attributes.Student_List;
+			StudentDefCollection = new refactorStudentCollection();
+			stuList.forEach(function(key) {
+				sMod = new refactorStudent();
+				sMod.set({
+					'id' : key.id,
+					'Name' : key.Name,
+					'Status' : key.Status
+				});
+				StudentDefCollection.add(sMod);
+			});		
+			
+		}
+	});
+	}
+	currentModels=StudentDefCollection;		
+	console.log('currentModels',currentModels);	
+	
+	
+	////console.log(' currentModels ',currentModels);
+	//currentModels=currentSession.get('02012013_C1_P3').attributes.Student_List.models;
+	
+	SingleDateView = Backbone.View.extend({
+		    tagName: "tr",
+
+		    events: {
+		    	"click input":"testing"
+		    },
+
+		    testing:function(){
+		    	//console.log(this.model.toJSON());
+		    	//console.log(this.model.id);
+		    	//console.log(this.$('input:radio[name=StatusBtn'+this.model.id+']:checked').val());
+		    	var selectStatus=this.$('input:radio[name=StatusBtn'+this.model.id+']:checked').val();
+		    	this.model.set({
+		    		'Status': selectStatus
+		    	}, {silent:true});
+		    	tempModel=this.model;
+		    	currentModels.forEach(function(obj,index,coll){
+		    		//console.log('obj ',obj,'index ',index);
+		    		if (obj.attributes.id==tempModel.attributes.id){
+		    			//console.log('obj ',obj.attributes.id,'tempModel ',tempModel.attributes.id);
+				    	//console.log('currentModels[index]',coll[index]);
+				    	//console.log('tempModel',tempModel);
+				    	coll[index]=tempModel;
+				    	//console.log('currentModels[index]',coll[index]);
+		    		}
+		    	});
+		    	//console.log('currentModels',currentModels);
+		    },	    
+
+		    initialize: function(){
+		    	this.currentModels=arguments.currentModels;
+		      _.bindAll(this, "render","testing");
+		    },
+
+		    render: function(){
+		    	  htmlTemp='<td><%=(id)%></td><td><%=(Name)%></td><td><input type="radio" value="absent"  <%=(Status=="absent"?"checked":"")%> name="StatusBtn<%=(id)%>" id="StatusBtn<%=(id)%>"  >Absent <input type="radio" value="Present" <%= (Status=="absent"?"":"checked")%> name="StatusBtn<%=(id)%>" id="StatusBtn<%=(id)%> ">Present</td>';  
+				  ////console.log('this.template ',htmlTemp);
+		    	  ////console.log('this.model ',this.model.toJSON());
+		      var element = _.template(htmlTemp,this.model.toJSON());
+		      ////console.log('element ',element);
+		      ////console.log('element ',this.el);
+		      $(this.el).html(element);
+		      return this;
+		    }
+		  });
+
+	
+	SingleDateAppView = Backbone.View.extend({
+		el: $("#app"),
+
+	    events: {
+	    	"click button":"btnSave"
+	    },
+	    
+	    initialize: function(){
+	    	this.currentModels=arguments.currentModels;
+	    	this.givenDateRecord=arguments.givenDateRecord;	    	
+	      _.bindAll(this, "render","btnSave");
+	    },
+
+	    btnSave:function(){
+	    	console.log('this.collection',this.collection);	    	
+	    	alreadyFound=false;
+	    	sDate = new singleDate({
+				'id' : givenDateRecord,
+				'Student_List' : currentModels.toJSON()
+			});
+	    	//if(sDateColl!=null){
+	    	if(this.collection.get(givenDateRecord)!=null){
+	    	console.log('this.currentModels',currentModels);
+	    		this.collection.get(givenDateRecord).set(sDate).save();
+				alreadyFound=true;	    	
+	    	}
+	    	if(!alreadyFound){
+	    		this.collection.create(sDate);
+	    	}	    	
+	    		    	
+	    },
+	    render: function(){
+	    	if(currentModels != 'undefined'){
+	    	////console.log('render currentModels :: ',currentModels);
+	    	currentModels.forEach(function(key){
+	    		viewMod = new refactorStudent();
+	    		viewMod.set({
+	    			'id' : key.attributes.id,
+	    			'Name' : key.attributes.Name,
+	    			'Status' : key.attributes.Status
+	    		});
+	    		////console.log('Key currentModels viewMod :: ',viewMod);
+	    		var view = new SingleDateView({model: viewMod,'currentModels':currentModels});
+	    	    ////console.log('#manage table tbody :: ',view.render().el.outerHTML);
+	    	    this.$("#manage table tbody").append(view.render().el);
+	    	});
+	    	}
+	    }
+	  });		
+
+	testing=new SingleDateAppView({'currentModels':currentModels,'givenDateRecord':'03012013_C1_P1','collection':sDateColl});
+	testing.render();
+	});
+	
+
+</script>
+
+
+</head>
+<body>
+<div id="app">
+		<header>
+		<button>Save</button>
+		</header>
+		<div id="manage">
+			<table>
+				<thead>
+					<tr>
+						<th>Student ID</th>
+						<th>Student Name</th>
+						<th>Status</th>						
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+</div>
+
+
+
+</body>
+</html>

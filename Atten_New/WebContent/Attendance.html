@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+<!-- CSS
+  ================================================== -->
+<link rel="stylesheet" href="stylesheets/base.css">
+<link rel="stylesheet" href="stylesheets/skeleton.css">
+<link rel="stylesheet" href="stylesheets/layout.css">
+
+<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+<!-- Favicons
+	================================================== -->
+<link rel="shortcut icon" href="images/favicon.ico">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72"
+	href="images/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114"
+	href="images/apple-touch-icon-114x114.png">
+
+<!-- JS
+	================================================== -->
+<script src="javascripts/json2.js"></script>
+<script src="javascripts/jquery-1.7.1.min.js"></script>
+<script src="javascripts/jquery.tmpl.js"></script>
+<script src="javascripts/underscore.js"></script>
+<script src="javascripts/backbone.js"></script>
+<script src="javascripts/backbone.localStorage.js"></script>
+<script src="javascripts/tabs.js"></script>
+<script src="javascripts/appmodelcollection.js"></script>
+<script src="javascripts/class-app.js"></script>
+
+
+<script type="text/javascript">
+	$(
+		function(){
+			var departmentSele='<option value="">Select Department</option>';
+			Departments.fetch();
+			var i;
+			for(i in Departments.models){				
+				var departmentId=Departments.models[i].attributes['departmentId'];
+				console.log(departmentId);
+				var departmentName=Departments.models[i].attributes['departmentName'];
+				console.log(departmentName);
+				departmentSele+='<option value='+departmentId+'>'+departmentName+'</option>';
+			}
+			 $('#departName').html(departmentSele);
+			 			
+		}
+	);
+		
+	function loadSemester(){
+		Semesters.fetch();
+		var staffName="CS-ST-1301";
+		var departmentName=$('#departName').val();
+		console.log('Selected Department Name ',departmentName);
+		selectSem=Semesters.models.filter(function (semester,key,list) {
+			var sem=list[key].toJSON();
+			console.log('sem.staffName',sem.staffName);
+			console.log('sem.departName',sem.departName);
+			return sem.staffName==staffName && sem.departName==departmentName;
+			});
+		console.log('Selected Semester ',selectSem);
+		var semesterNameHtml='<option value="">Select Semester</option>';		
+		var i;
+		var semName=[];
+		for(i in selectSem){				
+			var semesterName=selectSem[i].attributes['semesterName'];
+			console.log(semesterName);
+			semName.push(semesterName);
+		}
+		semName=_.uniq(semName,false);
+		for(i in semName){				
+			semesterNameHtml+='<option value='+semName[i]+'>'+semName[i]+'</option>';
+		}			
+		$('#semesterName').html(semesterNameHtml);
+		var paperNameHtml='<option value="">Select Subject</option>';
+		$('#paperName').html(paperNameHtml);
+	}
+	
+	function loadSubject(){
+		Semesters.fetch();
+		var staffName="CS-ST-1301";
+		var departmentName=$('#departName').val();
+		var semesterName=$('#semesterName').val();
+		console.log('Selected Department Name ',departmentName);
+		console.log('Selected Semester Name ',semesterName);
+		selectSubject=Semesters.models.filter(function (semester,key,list) {
+			var sem=list[key].toJSON();
+			console.log('sem.staffName',sem.staffName);
+			console.log('sem.departName',sem.departName);
+			console.log('sem.semesterName',sem.semesterName);
+			return sem.staffName==staffName && sem.departName==departmentName && semesterName== sem.semesterName;
+			});
+		console.log('Selected selectSubject ',selectSubject);
+		var paperNameHtml='<option value="">Select Subject</option>';		
+		var i;
+		var semName=[];
+		for(i in selectSubject){				
+			var paperName=selectSubject[i].attributes['paperName'];
+			console.log(paperName);			
+			paperNameHtml+='<option value='+paperName+'>'+paperName+'</option>';
+		}			
+		$('#paperName').html(paperNameHtml);
+	}
+	
+	function loadNextPage(){
+		var data = {};
+		$('#attenhome-form').find(':input').each(function() {
+			var self = $(this);
+			data[self.attr('name')] = self.val();
+			self.val("");
+		});
+		console.log('AttendanceStaffModel : ',data);
+		AttendanceStaff=new AttendanceStaffModel(data);
+		console.log('AttendanceStaff : ',AttendanceStaff);
+		staffInput=JSON.stringify(AttendanceStaff);
+		staffInput=JSON.stringify(staffInput);
+		localStorage.setItem('_attendancestaff',staffInput);
+	}
+	
+</script>
+</head>
+<body>
+	<header>Attendance System</header>
+	<div id="attendancehome">
+		<form id="attenhome-form">
+			<input type="text" readonly="readonly" id="staffName" name="staffName" value="Mr.Sabapathy">
+			<input type="text"  id="staffId" name="staffId" value="CS-ST-1301">
+			<select id="departName" name="departName" onchange="loadSemester();">
+			</select>
+			<select id="semesterName" name="semesterName" onchange="loadSubject();">
+				<option value="">Select Semester</option>
+			</select>
+			<select id="paperName" name="paperName">
+				<option value="">Select Paper</option>
+			</select>			
+		</form>
+		<div class="buttons">
+			<button id="select-atten" onclick="loadNextPage();">Get Atten List</button>
+		</div>
+	</div>	
+	<div id="attendence"></div>
+</body>
+</html>

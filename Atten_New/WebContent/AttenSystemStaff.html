@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <link rel="stylesheet" href="stylesheets/jquery-ui.css" /> 
+		<script src="javascripts/json2.js"></script>
+		<script src="javascripts/jquery-1.7.1.min.js"></script>
+		<script src="javascripts/jquery.tmpl.js"></script>
+		<script src="javascripts/underscore.js"></script>
+		<script src="javascripts/backbone.js"></script>
+		<script src="javascripts/backbone.localStorage.js"></script>
+		<script src="javascripts/tabs.js"></script>
+		<script src="javascripts/appmodelcollection.js"></script>
+        <script src="javascripts/jquery-ui.js"></script>
+  		<script src="javascripts/jquery.ui.datepicker.mobile.js"></script>
+        
+        <script type="text/javascript">
+        $(document).ready( function(){
+        	semID="";
+        	 //reset type=date inputs to text
+        	$(function() {
+    			$( "#somedate" ).datepicker();
+  			});
+        	var departmentSele='<option value="">Select Department</option>';
+			Departments.fetch();
+			var i;
+			for(i in Departments.models){				
+				var departmentId=Departments.models[i].attributes['departmentId'];
+				console.log(departmentId);
+				var departmentName=Departments.models[i].attributes['departmentName'];
+				console.log(departmentName);
+				departmentSele+='<option value='+departmentId+'>'+departmentName+'</option>';
+			}
+			 $('#departName').html(departmentSele);
+        });
+        
+    	function loadSemester(){
+    		Semesters.fetch();
+    		var staffName="IT-ST-0101";
+    		var departmentName=$('#departName').val();
+    		console.log('Selected Department Name ',departmentName);
+    		selectSem=Semesters.models.filter(function (semester,key,list) {
+    			var sem=list[key].toJSON();
+    			console.log('sem.staffName',sem.staffName);
+    			console.log('sem.departName',sem.departName);
+    			return sem.staffName==staffName && sem.departName==departmentName;
+    			});
+    		console.log('Selected Semester ',selectSem);
+    		var semesterNameHtml='<option value="">Select Semester</option>';		
+    		var i;
+    		var semName=[];
+    		for(i in selectSem){				
+    			var semesterName=selectSem[i].attributes['semesterName'];
+    			console.log(semesterName);
+    			semName.push(semesterName);
+    		}
+    		semName=_.uniq(semName,false);
+    		for(i in semName){				
+    			semesterNameHtml+='<option value='+semName[i]+'>'+semName[i]+'</option>';
+    		}			
+    		$('#semesterName').html(semesterNameHtml);
+    		var paperNameHtml='<option value="">Select Subject</option>';
+    		$('#paperName').html(paperNameHtml);
+    	}
+    	
+    	function loadSubject(){
+    		Semesters.fetch();
+    		var staffName="IT-ST-0101";
+    		var departmentName=$('#departName').val();
+    		var semesterName=$('#semesterName').val();
+    		console.log('Selected Department Name ',departmentName);
+    		console.log('Selected Semester Name ',semesterName);
+    		selectSubject=Semesters.models.filter(function (semester,key,list) {
+    			var sem=list[key].toJSON();
+    			console.log('sem.staffName',sem.staffName);
+    			console.log('sem.departName',sem.departName);
+    			console.log('sem.semesterName',sem.semesterName);
+    			return sem.staffName==staffName && sem.departName==departmentName && semesterName== sem.semesterName;
+    			});
+    		console.log('Selected selectSubject ',selectSubject);
+    		var paperNameHtml='<option value="">Select Subject</option>';		
+    		var i;
+    		var semName=[];
+    		for(i in selectSubject){				
+    			var paperName=selectSubject[i].attributes['paperName'];
+    			console.log(paperName);			
+    			paperNameHtml+='<option value='+paperName+'>'+paperName+'</option>';
+    		}			
+    		$('#paperName').html(paperNameHtml);
+    		var periodHtml='<option value="">Select Period</option>';		
+    		var i;    		
+    		for(i in [1,2,3,4]){
+    			console.log('Period',i);			
+    			periodHtml+='<option value='+i+'>Period '+i+'</option>';
+    		}			
+    		$('#period').html(periodHtml);   		
+    		
+    	}    	
+    	function loadNextPage(){
+    		Semesters.fetch();
+    		var staffName="IT-ST-0101";
+    		var departmentName=$('#departName').val();
+    		var semesterName=$('#semesterName').val();
+    		var paperName=$('#paperName').val();
+    		var period=$('#period').val();
+    		var somedate=$('#somedate').val();
+    		selectSemID=Semesters.models.filter(function (semester,key,list) {
+    			var sem=list[key].toJSON();
+    			console.log('sem.staffName',sem.staffName);
+    			console.log('sem.departName',sem.departName);
+    			console.log('sem.semesterName',sem.semesterName);
+    			return sem.staffName==staffName && sem.departName==departmentName && semesterName== sem.semesterName&&paperName==sem.paperName;
+    			});
+    		console.log('selectSemID',selectSemID[0]);
+    		var data = {};
+    		$('#attenhome-form').find(':input').each(function() {
+    			var self = $(this);
+    			data[self.attr('name')] = self.val();
+    			self.val("");
+    		});
+    		data['staffId']='Mr.Kanagasabapathy';
+    		data['staffName']='IT-ST-0101';
+    		data['semID']=selectSemID;
+    		data['period']=period;
+    		data['InputData']=somedate+'-'+(selectSemID[0].attributes.semesterId)+''+(selectSemID[0].attributes.departmentName)(selectSemID[0].attributes.semesterName)+'-'+(selectSemID[0].attributes.semesterName)+'-'+period;
+    		console.log('AttendanceStaffModel : ',data);
+    		AttendanceStaff=new AttendanceStaffModel(data);
+    		console.log('AttendanceStaff : ',AttendanceStaff);
+    		staffInput=JSON.stringify(AttendanceStaff);
+    		staffInput=JSON.stringify(staffInput);
+    		localStorage.setItem('_attendancestaff',staffInput);
+    		location.href="AttenSystem.html";
+    		
+    		
+    	}
+    	
+        </script>
+    </head>
+<body>
+	<div id="home" data-role="page">
+		<div data-role="header">
+			<H1>Attendance Tracking System</H1>
+		</div>
+		<div >
+			<div id="attendancehome">
+				<form id="attenhome-form">
+					<label>Staff Name : Mr.Kanagasabapathy</label><br> <label>IT-ST-0101</label><br>
+					<select id="departName" name="departName"
+						onchange="loadSemester();"><br>
+					</select><br> <select id="semesterName" name="semesterName"
+						onchange="loadSubject();">
+						<option value="">Select Semester</option>
+					</select><br> <select id="paperName" name="paperName">
+						<option value="">Select Paper</option>
+					</select><br> <input type="text" name="somedate" id="somedate" value=""
+						readonly="readonly" />
+					<!-- 			
+							<input type="date" data-role="datebox" name="somedate"
+    							data-options='{"mode": "datebox", "overrideDateFormat": "mm/dd/YYYY"}' /> -->
+					<br><select id="period" name="period">
+						<option value="">Select Period</option>
+					</select>
+				</form>
+				<button onclick="loadNextPage();">Get Atten List</button>
+			</div>
+
+		</div>
+	</div>
+</body>
+</html>

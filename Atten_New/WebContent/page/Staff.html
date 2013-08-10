@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<html lang="en">
+<!--<![endif]-->
+<head>
+
+<!-- Basic Page Needs
+  ================================================== -->
+<meta charset="utf-8">
+<title>Your Page Title Here :)</title>
+<meta name="description" content="">
+<meta name="author" content="">
+
+<!-- Mobile Specific Metas
+  ================================================== -->
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+  ================================================== -->
+<link rel="stylesheet" href="stylesheets/base.css">
+<link rel="stylesheet" href="stylesheets/skeleton.css">
+<link rel="stylesheet" href="stylesheets/layout.css">
+
+<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+<!-- Favicons
+	================================================== -->
+<link rel="shortcut icon" href="images/favicon.ico">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72"
+	href="images/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114"
+	href="images/apple-touch-icon-114x114.png">
+
+<!-- JS
+	================================================== -->
+<script src="javascripts/json2.js"></script>
+<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script src="javascripts/jquery.tmpl.js"></script>
+<script src="javascripts/underscore.js"></script>
+<script src="javascripts/backbone.js"></script>
+<script src="javascripts/backbone.localStorage.js"></script>
+<script src="javascripts/tabs.js"></script>
+<script src="javascripts/department-app.js"></script>
+
+</head>
+<body>
+
+
+
+	<!-- Primary Page Layout
+	================================================== -->
+
+	<div class="container">
+
+		<div id="app">
+			<header>
+				<h1>Staff Detail</h1>
+			</header>
+
+			<ul class="tabs">
+				<li><a id="create-tab" class="active"
+					href="javascript:void(0);">Create</a></li>
+				<li><a id="manage-tab" href="javascript:void(0);">Manage</a></li>
+			</ul>
+
+			<div id="create" class="content">
+				<form id="staff-form">
+					<input type="text" name="staffName" id="staffName-field" value=""
+						placeholder="Enter Staff Name..." /> <input type="text"
+						name="staffdoj" id="staffdoj-field" value=""
+						placeholder="Enter Date Of Join..." /> <select id="departName"
+						name="departName" required>
+						<option value="">Select Department</option>
+						<option value="CSE">Computer Science</option>
+						<option value="IT">Information Technology</option>
+						<option value="EEE">Electrical Engineering</option>
+						<option value="ECE">Electronic Engineering</option>
+					</select>
+				</form>
+				<div class="buttons">
+					<button id="add-staff">Add Staff</button>
+				</div>
+			</div>
+
+			<div id="manage" class="content" data-sort="staffName">
+				<table>
+					<thead>
+						<tr>
+							<th><input id="selectall" type="checkbox" name="selectall" /></th>
+							<th><a data-sort="staffName" class="sort"
+								href="javascript:void(0);">Staff ID</a></th>
+							<th><a data-sort="staffName" class="sort"
+								href="javascript:void(0);">Staff Name</a></th>
+							<th><a data-sort="staffName" class="sort"
+								href="javascript:void(0);">Staff DOJ</a></th>
+							<th><a data-sort="staffName" class="sort"
+								href="javascript:void(0);">Staff Department</a></th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+
+			<div id="manage-edit" class="content">
+				<form id="staff-edit-form">
+					<input type="text" name="staffName" id="staffName-field" value=""
+						placeholder="Enter Staff Name..." /> <input type="text"
+						name="staffdoj" id="staffdoj-field" value=""
+						placeholder="Enter Date Of Join..." /> <select id="departName"
+						name="departName" required>
+						<option value="">Select Department</option>
+						<option value="CSE">Computer Science</option>
+						<option value="IT">Information Technology</option>
+						<option value="EEE">Electrical Engineering</option>
+						<option value="ECE">Electronic Engineering</option>
+					</select>
+				</form>
+				<div class="buttons">
+					<button id="update-staff">update staff</button>
+				</div>
+			</div>
+
+		</div>
+
+		<footer>
+			Built by <a href='http://seogrady.com' target="_blank">Shane
+				O'Grady'</a> <span>Get the code at <a
+				href="https://github.com/seogrady/backbone-books" target="_blank">Github</a></span>
+		</footer>
+
+	</div>
+	<!-- container -->
+
+	<!-- Templates -->
+	<script id="staff-list" type="text/template">
+		  <td><input class="select" type="checkbox" name="select" data-id="${id}" /></td>
+		  <td>${staffId}</td>	
+		  <td>${staffName}</td>
+		  <td>${staffdoj}</td>
+		  <td>${departName}</td>
+		  <td>
+		    <a class="edit-staff" href="javascript:void(0);" data-id="${id}">edit</a>
+		    <a class="delete-staff" href="javascript:void(0);" data-id="${id}">delete</a>  
+		  </td>									
+    </script>
+
+
+	<!-- End Document
+================================================== -->
+</body>
+</html>

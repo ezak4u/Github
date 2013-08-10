@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<script src="javascripts/json2.js"></script>
+<script src="javascripts/jquery-1.7.1.min.js"></script>
+<script src="javascripts/jquery.tmpl.js"></script>
+<script src="javascripts/underscore.js"></script>
+<script src="javascripts/backbone.js"></script>
+<script src="javascripts/backbone.localStorage.js"></script>
+<script src="javascripts/tabs.js"></script>
+<script src="javascripts/appmodelcollection.js"></script>
+<script type="text/javascript">
+$(function(){
+	var departmentSele='<option value="">Select Department</option>';
+	Departments.fetch();
+	var i;
+	for(i in Departments.models){				
+		var departmentId=Departments.models[i].attributes['departmentId'];
+		console.log(departmentId);
+		var departmentName=Departments.models[i].attributes['departmentName'];
+		console.log(departmentName);
+		departmentSele+='<option value='+departmentId+'>'+departmentName+'</option>';
+	}
+	$('#departmentName').html(departmentSele);
+	
+});
+
+function loadStudentList(){
+	var departmentName=$('#departmentName').val();
+	var semesterName=$('#semesterName').val();
+	if(!semesterName || !departmentName){
+		if(!semesterName){ 
+			alert('Select Semester');
+		}
+		if(!departmentName){ 
+			alert('Select Department');
+		}
+	}else{		
+		Students.fetch();		
+		infoSelectStud=Students.models.filter(function(student,key,list){
+			var stud=list[key].toJSON();
+			console.log('stu.staffName',stud.studentName);
+			console.log('stu.departName',stud.departName);			
+			return stud.departName==departmentName && stud.semesterName==semesterName;			
+		});		
+		console.log('Student Select ',infoSelectStud);
+		if(infoSelectStud.length==0){
+			alert('Student not found');
+		}else{
+		var i;
+		var studentSele='<option value="">Select Student</option>';
+		for(i in infoSelectStud){				
+			var studentId=infoSelectStud[i].attributes['studentId'];
+			console.log('studentId :',studentId);
+			var studentName=infoSelectStud[i].attributes['studentName'];
+			console.log('studentName',studentName);
+			studentSele+='<option value='+studentId+'>'+studentName+'</option>';
+		}	
+			$('#studentName').html(studentSele);	
+		}
+		
+	}
+}
+
+function loadDetail(){
+	dataStudentInfo={};
+	var departmentName=$('#departmentName').find(":selected").text();
+	var semesterName=$('#semesterName').find(":selected").text();;;
+	var studentId=$('#studentName').val();
+	var studentName=$('#studentName').find(":selected").text();
+	dataStudentInfo['departmentName']=departmentName;
+	dataStudentInfo['semesterName']=semesterName;
+	dataStudentInfo['studentId']=studentId;
+	dataStudentInfo['studentName']=studentName;
+	var dataStudentInfoJSON;
+	dataStudentInfoJSON=JSON.stringify(dataStudentInfo);
+	localStorage.setItem('_studentSelectInfo',dataStudentInfoJSON);
+}
+</script>
+<title>Insert title here</title>
+</head>
+<body>
+	<table>
+		<tr><td>
+			<select id="departmentName">
+				<option>Select Department</option>
+			</select>
+			</td>
+		</tr>
+		<tr>
+		<td>
+			<select id="semesterName" onchange="loadStudentList();">
+				<option value="">Select Semester</option>
+				<option value="1st">1st Semester</option>
+				<option value="2nd">2nd Semester</option>
+				<option value="3rd">3rd Semester</option>
+				<option value="4th">4th Semester</option>
+			</select></td>
+		</tr>
+		<tr><td>
+			<select id="studentName">
+				<option>Select Student</option>
+			</select>
+			</td>
+		</tr>
+		<tr><td>
+			<button>Get Detail</button>
+			</td>
+		</tr>
+	</table>
+</body>
+</html>
